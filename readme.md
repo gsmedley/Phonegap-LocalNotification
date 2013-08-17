@@ -13,7 +13,7 @@ Install the core plugin files via the [Command-line Interface](http://docs.phone
 
 In `platforms/ios/CordovaLib/Classes/CDVPlugin.m` uncomment the following line:
 
-		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveLocalNotification:) name:CDVLocalNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveLocalNotification:) name:CDVLocalNotification object:nil];
 
 In `platforms/ios/CordovaLib/Classes/CDVPlugin.m` uncomment the following lines at the end of the file:
 
