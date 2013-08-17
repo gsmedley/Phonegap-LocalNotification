@@ -49,3 +49,12 @@ Within the `www/js/index.js` file, or any other included js files, the following
     		alert("Hello World! This alert was triggered by notification " + notificationId);
     	}    		
     });
+
+Uninstalling the plugin
+-----------------------
+
+To uninstall the plugin and its components, use:
+
+    $ phonegap local plugin remove localnotification
+
+Note: You may also want to comment out the files above that were necessary for installation.
