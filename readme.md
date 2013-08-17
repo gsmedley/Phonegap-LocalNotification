@@ -1,136 +1,47 @@
-PHONEGAP LOCALNOTIFICATION 
-The Phonegap LocalNotification plugin is great, but the documentation is lacking - also explanation of how to do more than set a 60 second timer.
+Cordova/PhoneGap Local Notification Plugin
+==========================================
 
-This example goes through in detail how to set a timer for the future based on hours and minutes, as well as days in the future - also setting up repeat events for daily, weekly, monthly, yearly.
+A Cordova/PhoneGap 3.0.0+ plugin to create local notifications on iOS, originally by [Olivier Lesnicki](https://github.com/olivierlesnicki/cordova-ios-LocalNotification). This may be used to 
+schedule notifications or other functions that trigger at some point in the future.
 
-It also explains how to create a callback to your app when it is launched from that notification.
+Installing the plugin
+---------------------
 
-the full write up is here:<br>
-http://www.drewdahlman.com/meusLabs/?p=117
+In `platforms/ios/CordovaLib/Classes/CDVPlugin.m` uncomment the following line:
 
+		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveLocalNotification:) name:CDVLocalNotification object:nil];
 
-<b>NOTES</b>:<br>
-A breakdown of options - <br>
-- date ( this expects a date object )<br>
-- message ( the message that is displayed )<br>
-- repeat ( has the options of 'weekly','daily','monthly','yearly')<br>
-- badge ( displays number badge to notification )<br>
-- foreground ( a javascript function to be called if the app is running )<br>
-- background ( a javascript function to be called if the app is in the background )<br>
-- sound ( a sound to be played, the sound must be located in your project's resources and must be a caf file )<br>
+In `platforms/ios/CordovaLib/Classes/CDVPlugin.m` uncomment the following lines at the end of the file:
 
-<b>ADJUSTING AppDelegate</b><br>
-After you've added LocalNotifications to your plugins you need to make a minor addition to AppDelegate.m
+    - (void)didReceiveLocalNotification:(NSNotification *)notification
+    {
+       // UILocalNotification* localNotification = [notification object]; // get the payload as a LocalNotification
+    }
 
-<b>Cordova 1.7+</b>
-<pre>
-	// ADD OUR NOTIFICATION CODE
-	- (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification 
-	{
+In `platforms/ios/CordovaLib/Classes/CDVPlugin.h` uncomment the following line:
 
-	    UIApplicationState state = [application applicationState];
-	    if (state == UIApplicationStateActive) {
-			// WAS RUNNING
-		    NSLog(@"I was currently active");
+    - (void)didReceiveLocalNotification:(NSNotification *)notification;
 
-		    NSString *notCB = [notification.userInfo objectForKey:@"foreground"];
-		    NSString *notID = [notification.userInfo objectForKey:@"notificationId"];
+Note: The original instructions said to place the `.caf` sound files into the `Resources` folder in Xcode. I have yet to make the sound work, so I'm not sure if this is accurate.
 
-		    NSString * jsCallBack = [NSString 
-		                             stringWithFormat:@"%@(%@)", notCB,notID];  
+Aside from the audio, the installation is complete.
 
+Using the plugin
+----------------
 
-		    [self.viewController.webView  stringByEvaluatingJavaScriptFromString:jsCallBack];
+Within the `www/js/index.js` file, or any other included js files, the following will trigger a local notification after 5 seconds:
 
-		    application.applicationIconBadgeNumber = 0;
-	    }
-	    else {
-	        // WAS IN BG
-	        NSLog(@"I was in the background");
-
-	        NSString *notCB = [notification.userInfo objectForKey:@"background"];
-	        NSString *notID = [notification.userInfo objectForKey:@"notificationId"];
-
-		    NSString * jsCallBack = [NSString 
-		                             stringWithFormat:@"%@(%@)", notCB,notID]; 
-	        [self.viewController.webView stringByEvaluatingJavaScriptFromString:jsCallBack];         
-
-	        application.applicationIconBadgeNumber = 0;
-	    }                 
-	}
-</pre>
-<b>Phonegap</b>
-<pre>
-	// ADD OUR NOTIFICATION CODE
-	- (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification 
-	{
-
-	    UIApplicationState state = [application applicationState];
-	    if (state == UIApplicationStateActive) {
-			// WAS RUNNING
-		    NSLog(@"I was currently active");
-
-		    NSString *notCB = [notification.userInfo objectForKey:@"foreground"];
-		    NSString *notID = [notification.userInfo objectForKey:@"notificationId"];
-
-		    NSString * jsCallBack = [NSString 
-		                             stringWithFormat:@"%@(%@)", notCB,notID];  
-
-
-		    [self.webView  stringByEvaluatingJavaScriptFromString:jsCallBack];
-
-		    application.applicationIconBadgeNumber = 0;
-	    }
-	    else {
-	        // WAS IN BG
-	        NSLog(@"I was in the background");
-
-	        NSString *notCB = [notification.userInfo objectForKey:@"background"];
-	        NSString *notID = [notification.userInfo objectForKey:@"notificationId"];
-
-		    NSString * jsCallBack = [NSString 
-		                             stringWithFormat:@"%@(%@)", notCB,notID]; 
-
-	        [self.webView stringByEvaluatingJavaScriptFromString:jsCallBack];         
-
-	        application.applicationIconBadgeNumber = 0;
-	    }                 
-	}
-</pre>
-Add this code to the end of your AppDelegate.m file in order for the callback functions to work properly!
-
-<b>EXAMPLE</b><br>
-<pre>
-var d = new Date();
-	d = d.getTime() + 60*1000; //60 seconds from now
-	d = new Date(d);
-
-window.plugins.localNotification.add({
-	date: d, // your set date object
-	message: 'Hello world!',
-	repeat: 'weekly', // will fire every week on this day
-	badge: 1,
-	foreground:'foreground',
-	background:'background',
-	sound:'sub.caf'
-});
-
-function foreground(id){
-	console.log("I WAS RUNNING ID="+id);
-}
-function background(id){
-	console.log("I WAS IN THE BACKGROUND ID="+id)
-}
-
-</pre>
-<br>
-
-<b>UPDATES:</b>
-<i>5.16.2012</i>
-- Added Notification ID's to callback.
-- Fixed spelling error for 'foreground'
-- Notice that you no longer have to call your background or foreground functions with the (). This is now added by the plugin on the objective-c side of things.
-<i>5.23.2013</i>
-- Merged Code from Olivier Lesnicki. for 2.3+ support
-- Updated Readme
-
+    localNotifier.addNotification({
+    	fireDate        : Math.round(new Date().getTime()/1000 + 5),
+    	alertBody       : "This is a new local notification.",
+    	repeatInterval  : "daily",
+    	soundName       : "horn.caf",
+    	badge           : 0,
+    	notificationId  : 123,
+    	foreground      : function(notificationId){ 
+    		alert("Hello World! This alert was triggered by notification " + notificationId); 
+    	},
+    	background	: function(notificationId){
+    		alert("Hello World! This alert was triggered by notification " + notificationId);
+    	}    		
+    });
