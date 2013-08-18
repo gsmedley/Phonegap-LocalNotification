@@ -26,9 +26,7 @@ In `platforms/ios/CordovaLib/Classes/CDVPlugin.h` uncomment the following line:
 
     - (void)didReceiveLocalNotification:(NSNotification *)notification;
 
-Note: The original instructions said to place the `.caf` sound files into the `Resources` folder in Xcode. I have yet to make the sound work, so I'm not sure if this is accurate. My project doesn't need audio, so I'll gladly add the updates if someone gets it to work.
-
-Aside from the audio, the installation is complete.
+Place any `.caf` audio files into the `Resources` folder in Xcode. The `horn.caf` file has been included in this repo as an example. Note that the sound only plays if the notification is triggered while the app is in the background.
 
 Using the plugin
 ----------------
