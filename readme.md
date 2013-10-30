@@ -1,8 +1,17 @@
 Cordova/PhoneGap Local Notification Plugin
 ------------------------------------------
 
-A Cordova/PhoneGap 3.0.0+ plugin to create local notifications on iOS, originally by [Olivier Lesnicki](https://github.com/olivierlesnicki/cordova-ios-LocalNotification). This may be used to 
-schedule notifications or other functions that trigger at some point in the future.
+A Cordova/PhoneGap 3.0.0+ plugin to create local notifications on iOS and Android.
+
+iOS version originally by [Olivier Lesnicki](https://github.com/olivierlesnicki/cordova-ios-LocalNotification). 
+Android version originally by [Vegard Løkken] (https://github.com/phonegap/phonegap-plugins/tree/master/Android/LocalNotification) 
+
+TO DO
+-----
+
+Test ios changes
+Make foreground/background callbacks work in Android
+Run addNotification in a thread - Android
 
 Installing the plugin
 ---------------------
@@ -34,12 +43,12 @@ Using the plugin
 Within the `www/js/index.js` file, or any other included js files, the following will trigger a local notification after 5 seconds:
 
     localNotifier.addNotification({
-    	fireDate        : Math.round(new Date().getTime()/1000 + 5),
-    	alertBody       : "This is a new local notification.",
+    	date            : Math.round(new Date().getTime()/1000 + 5),
+    	message         : "This is a new local notification.",
     	repeatInterval  : "daily",
     	soundName       : "horn.caf",
     	badge           : 0,
-    	notificationId  : 123,
+    	id              : 123,
     	foreground      : function(notificationId){ 
     		alert("Hello World! This alert was triggered by notification " + notificationId); 
     	},
