@@ -1,14 +1,22 @@
-/*!
- * Cordova 2.3.0+ LocalNotification plugin
- * Original author: Olivier Lesnicki
- */
+//
+//  LocalNotification.h
+//	Phonegap LocalNotification Plugin
+//	Copyright (c) Greg Allen 2011 & 2012 Drew Dahlman
+//	MIT Licensed
 
+#import <Foundation/Foundation.h>
+
+#ifdef CORDOVA_FRAMEWORK
+#import <Cordova/CDVPlugin.h>
+#else
 #import <Cordova/CDV.h>
+#endif
 
-@interface LocalNotification : CDVPlugin
-
-- (void)addNotification:(CDVInvokedUrlCommand*)command;
-- (void)cancelNotification:(CDVInvokedUrlCommand*)command;
-- (void)cancelAllNotifications:(CDVInvokedUrlCommand*)command;
+@interface LocalNotification : CDVPlugin {
+    
+}
+- (void)addNotification:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void)cancelNotification:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void)cancelAllNotifications:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
 @end

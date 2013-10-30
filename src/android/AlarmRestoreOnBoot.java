@@ -1,4 +1,4 @@
-package com.phonegap.plugins.localnotification;
+package com.phonegap.plugin.localnotification;
 
 import java.util.Calendar;
 import java.util.Map;
@@ -48,9 +48,10 @@ public class AlarmRestoreOnBoot extends BroadcastReceiver {
 		final String subTitle = options.getAlarmSubTitle();
 		final String ticker = options.getAlarmTicker();
 		final String id = options.getNotificationId();
+		final String iconName = options.getIconName();
 		final Calendar cal = options.getCal();
 
-		alarm.addAlarm(daily, title, subTitle, ticker, id, cal);
+		alarm.addAlarm(daily, title, subTitle, ticker, iconName, id, cal);
 
 	    } catch (JSONException e) {
 		Log.d(pluginName,

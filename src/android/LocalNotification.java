@@ -1,4 +1,4 @@
-package com.phonegap.plugins.localnotification;
+package com.phonegap.plugin.localnotification;
 
 import java.util.Calendar;
 
@@ -8,10 +8,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.util.Log;
-import org.apache.cordova.CallbackContext;
 
+import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
-import org.apache.cordova.api.PluginResult;
+import org.apache.cordova.PluginResult;
 /**
  * This plugin utilizes the Android AlarmManager in combination with StatusBar
  * notifications. When a local notification is scheduled the alarm manager takes
@@ -22,7 +22,7 @@ import org.apache.cordova.api.PluginResult;
  */
 public class LocalNotification extends CordovaPlugin {
 
-    public static final String PLUGIN_NAME = "LocalNotification";
+	public static final String PLUGIN_NAME = "LocalNotification";
 
     /**
      * Delegate object that does the actual alarm registration. Is reused by the
@@ -36,30 +36,33 @@ public class LocalNotification extends CordovaPlugin {
     Log.d(PLUGIN_NAME, "Plugin execute called with action: " + action);
 
     boolean result = false;
-
-    final AlarmOptions alarmOptions = new AlarmOptions();
-    alarmOptions.parseOptions(optionsArr);
-
+    
     /*
      * Determine which action of the plugin needs to be invoked
      */
-    String alarmId = alarmOptions.getNotificationId();
-    if (action.equalsIgnoreCase("add")) {
+   
+    if (action.equalsIgnoreCase("addNotification")) {
+        final AlarmOptions alarmOptions = new AlarmOptions();
+        alarmOptions.parseOptions(optionsArr);
+        String alarmId = alarmOptions.getNotificationId();
         final boolean daily = alarmOptions.isRepeatDaily();
         final String title = alarmOptions.getAlarmTitle();
         final String subTitle = alarmOptions.getAlarmSubTitle();
         final String ticker = alarmOptions.getAlarmTicker();
+        final String icon = alarmOptions.getIconName();
 
         persistAlarm(alarmId, optionsArr);
-        this.add(daily, title, subTitle, ticker, alarmId, alarmOptions.getCal());
+        this.add(daily, title, subTitle, ticker, icon, alarmId, alarmOptions.getCal());
         callbackContext.success();
         result = true;
-    } else if (action.equalsIgnoreCase("cancel")) {
+    } else if (action.equalsIgnoreCase("cancelNotification")) {
+    	String alarmId = optionsArr.optString(0);
         unpersistAlarm(alarmId);
         this.cancelNotification(alarmId);
         callbackContext.success();
         result = true;
-    } else if (action.equalsIgnoreCase("cancelall")) {
+    } else if (action.equalsIgnoreCase("cancelAllNotifications")) {
+        unpersistAlarmAll();
         this.cancelAllNotifications();
         callbackContext.success();
         result = true;
@@ -78,6 +81,8 @@ public class LocalNotification extends CordovaPlugin {
      *            panel
      * @param alarmSubTitle
      *            The subtitle of the alarm
+     * @param icon
+     *            name of the icon resource
      * @param alarmId
      *            The unique ID of the notification
      * @param cal
@@ -86,14 +91,14 @@ public class LocalNotification extends CordovaPlugin {
      * @return A pluginresult.
      */
     public PluginResult add(boolean repeatDaily, String alarmTitle, String alarmSubTitle, String alarmTicker,
-        String alarmId, Calendar cal) {
+    		 String icon,  String alarmId, Calendar cal) {
     final long triggerTime = cal.getTimeInMillis();
     final String recurring = repeatDaily ? "daily" : "onetime";
 
     Log.d(PLUGIN_NAME, "Adding " + recurring + " notification: '" + alarmTitle + alarmSubTitle + "' with id: "
         + alarmId + " at timestamp: " + triggerTime);
 
-    boolean result = alarm.addAlarm(repeatDaily, alarmTitle, alarmSubTitle, alarmTicker, alarmId, cal);
+    boolean result = alarm.addAlarm(repeatDaily, alarmTitle, alarmSubTitle,  alarmTicker, icon, alarmId, cal);
     if (result) {
         return new PluginResult(PluginResult.Status.OK);
     } else {
@@ -134,7 +139,6 @@ public class LocalNotification extends CordovaPlugin {
     final boolean result = alarm.cancelAll(alarmSettings);
 
     if (result) {
-        unpersistAlarmAll();
         return new PluginResult(PluginResult.Status.OK);
     } else {
         return new PluginResult(PluginResult.Status.ERROR);

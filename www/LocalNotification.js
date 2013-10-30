@@ -13,28 +13,40 @@ localNotifier.addNotification = function(options) {
         
     var defaults = {
                 
-        fireDate        : new Date(new Date().getTime() + 5000),
-        alertBody       : "This is a local notification.",
-        repeatInterval  : "" ,
-        soundName       : "horn.caf" ,
-        badge           : 0  ,
-        notificationId  : 1  ,
-        background      : function(notificationId){},
-        foreground      : function(notificationId){}                
+        date            : new Date(new Date().getTime() + 5000),
+        message         : "This is a local notification.",
+        id              : '1'  ,
+
+        // android only
+        ticker          : "Alarm Ticker",
+        icon            : "small_notification_icon",
+
+        // ios only
+        repeat          : "" ,
+        sound           : "horn.caf" ,
+        hasAction       : true,
+        action          : 'View',
+        badge           : 0 ,        
+        background      : function(notificationId){  console.log( "addNotification background callback") },
+        foreground      : function(notificationId){   console.log( "addNotification foreground callback")  }
+              
     };
         
     if(options){
         for (var key in defaults) {
             if (typeof options[key] !== "undefined"){
-            defaults[key] = options[key];
+            defaults[key] = options[key];          
+
             }
         }
     }
     
-    if (typeof defaults.fireDate == 'object') {
-        defaults.fireDate = Math.round(defaults.fireDate.getTime()/1000);
+    if (typeof defaults.date == 'object') {
+        defaults.date = Math.round(defaults.date.getTime()/1000);
     }
-        
+
+    for (var key in defaults) { console.log( "-- " + key + ": " +  defaults[key] ) }
+     
     cordova.exec(
         function(params) {
             window.setTimeout(function(){
@@ -59,19 +71,15 @@ localNotifier.addNotification = function(options) {
         "LocalNotification" , 
         "addNotification"   , 
         [
-            defaults.fireDate        ,
-            defaults.alertBody       ,
-            defaults.repeatInterval  ,
-            defaults.soundName       ,
-            defaults.notificationId
+            defaults
         ]
     );
                     
 };
 
 //------------------------------------------------------------------------------  
-localNotifier.cancelNotification = function(str, callback) {
-    cordova.exec(callback, null, "LocalNotification", "cancelNotification", [str]);
+localNotifier.cancelNotification = function(id, callback) {
+    cordova.exec(callback, null, "LocalNotification", "cancelNotification", [id]);
 };
 
 //------------------------------------------------------------------------------  

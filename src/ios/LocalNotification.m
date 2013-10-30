@@ -1,95 +1,73 @@
-/*!
- * Cordova 2.3.0+ LocalNotification plugin
- * Original author: Olivier Lesnicki
- */
+//
+//  LocalNotification.m
+//  Phonegap LocalNotification Plugin
+//  Copyright (c) Greg Allen 2011 & 2012 Drew Dahlman
+//  MIT Licensed
 
 #import "LocalNotification.h"
-#import <Cordova/CDV.h>
+
 
 @implementation LocalNotification
-
--(void)addNotification:(CDVInvokedUrlCommand*)command {
-        
+- (void)addNotification:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
     NSMutableDictionary *repeatDict = [[NSMutableDictionary alloc] init];
-    [repeatDict setObject:[NSNumber numberWithInt:NSDayCalendarUnit     ] forKey:@"daily"   ];
-    [repeatDict setObject:[NSNumber numberWithInt:NSWeekCalendarUnit    ] forKey:@"weekly"  ];
-    [repeatDict setObject:[NSNumber numberWithInt:NSMonthCalendarUnit   ] forKey:@"monthly" ];
-    [repeatDict setObject:[NSNumber numberWithInt:NSYearCalendarUnit    ] forKey:@"yearly"  ];
-    [repeatDict setObject:[NSNumber numberWithInt:0] forKey:@""         ];
-    
-    UILocalNotification* notif = [[UILocalNotification alloc] init];
+    [repeatDict setObject:[NSNumber numberWithInt:NSDayCalendarUnit] forKey:@"daily"];
+    [repeatDict setObject:[NSNumber numberWithInt:NSWeekCalendarUnit] forKey:@"weekly"];
+    [repeatDict setObject:[NSNumber numberWithInt:NSMonthCalendarUnit] forKey:@"monthly"];
+    [repeatDict setObject:[NSNumber numberWithInt:NSYearCalendarUnit] forKey:@"yearly"];
+    [repeatDict setObject:[NSNumber numberWithInt:0] forKey:@""];
 
-	double fireDate             = [[command.arguments objectAtIndex:0] doubleValue];
-    NSString *alertBody         =  [command.arguments objectAtIndex:1];
-    NSNumber *repeatInterval    =  [command.arguments objectAtIndex:2];
-    NSString *soundName         =  [command.arguments objectAtIndex:3];
-    NSString *notificationId    =  [command.arguments objectAtIndex:4];
+    // notif settings
+    double timestamp = [[options objectForKey:@"date"] doubleValue];
+    NSString *msg = [options objectForKey:@"message"];
+    NSString *action = [options objectForKey:@"action"];
+    NSString *notificationId = [options objectForKey:@"id"];
+    NSString *sound = [options objectForKey:@"sound"];
+    NSString *bg = [options objectForKey:@"background"];
+    NSString *fg = [options objectForKey:@"foreground"];
+    NSString *repeat = [options objectForKey:@"repeat"];
+    NSInteger badge = [[options objectForKey:@"badge"] intValue];
+    bool hasAction = ([[options objectForKey:@"hasAction"] intValue] == 1)?YES:NO;
     
-    notif.alertBody         = ([alertBody isEqualToString:@""])?nil:alertBody;
-    notif.fireDate          = [NSDate dateWithTimeIntervalSince1970:fireDate];
-    notif.repeatInterval    = [[repeatDict objectForKey: repeatInterval] intValue];
-    notif.soundName         = soundName;
-    notif.timeZone          = [NSTimeZone defaultTimeZone];
+    NSDate *date = [NSDate dateWithTimeIntervalSince1970:timestamp];
     
-	NSDictionary *userDict = [NSDictionary dictionaryWithObjectsAndKeys:
-                                notificationId    , @"notificationId",
-                                command.callbackId, @"callbackId",
-                                nil
-                              ];
+    UILocalNotification *notif = [[UILocalNotification alloc] init];
+    notif.fireDate = date;
+    notif.hasAction = hasAction;
+    notif.timeZone = [NSTimeZone defaultTimeZone];
+    notif.repeatInterval = [[repeatDict objectForKey: repeat] intValue];
+    
+    notif.alertBody = ([msg isEqualToString:@""])?nil:msg;
+    notif.alertAction = action;
+    
+    notif.soundName = sound;
+    notif.applicationIconBadgeNumber = badge;
+    
+    NSDictionary *userDict = [NSDictionary dictionaryWithObjectsAndKeys:notificationId,@"notificationId",bg,@"background",fg,@"foreground",nil];
     
     notif.userInfo = userDict;
     
     [[UIApplication sharedApplication] scheduleLocalNotification:notif];
-        
-    
+    NSLog(@"Notification Set: %@ (ID: %@, Badge: %i, sound: %@,background: %@, foreground: %@)", date, notificationId, badge, sound,bg,fg);
+    //[notif release];
 }
 
-- (void)cancelNotification:(CDVInvokedUrlCommand*)command {
-    
-    NSString *notificationId    = [command.arguments objectAtIndex:0];
-	NSArray *notifications      = [[UIApplication sharedApplication] scheduledLocalNotifications];
-    
-	for (UILocalNotification *notification in notifications) {
-        
-		NSString *notId = [notification.userInfo objectForKey:@"notificationId"];
-        
-		if ([notificationId isEqualToString:notId]) {
-			[[UIApplication sharedApplication] cancelLocalNotification: notification];
-		}
-        
-	}
-
+- (void)cancelNotification:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
+    NSString *notificationId = [arguments objectAtIndex:0];
+    NSArray *notifications = [[UIApplication sharedApplication] scheduledLocalNotifications];
+    for (UILocalNotification *notification in notifications) {
+        NSString *notId = [notification.userInfo objectForKey:@"notificationId"];
+        if ([notificationId isEqualToString:notId]) {
+            NSLog(@"Notification Canceled: %@", notificationId);
+            [[UIApplication sharedApplication] cancelLocalNotification:notification];
+        }
+    }
 }
 
-- (void)cancelAllNotifications:(CDVInvokedUrlCommand*)command {
-    
+- (void)cancelAllNotifications:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
+    NSLog(@"All Notifications cancelled");
     [[UIApplication sharedApplication] cancelAllLocalNotifications];
-    
 }
 
-- (void)didReceiveLocalNotification:(NSNotification *)notification
-{
-    
-    UILocalNotification* notif  = [notification object];
-    
-    UIApplicationState state = [[UIApplication sharedApplication] applicationState];
-    
-    NSString* stateStr = (state == UIApplicationStateActive ? @"active" : @"background");
-    
-    CDVPluginResult* pluginResult = nil;
-    NSString* javaScript          = nil;
-    
-    NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
-    [params setObject:stateStr forKey:@"appState"];
-    [params setObject:[notif.userInfo objectForKey:@"notificationId"] forKey:@"notificationId"];
-    
-    
-    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK  messageAsDictionary:params];
-    javaScript   = [pluginResult toSuccessCallbackString: [notif.userInfo objectForKey:@"callbackId"]];
-    
-    [self writeJavascript:javaScript];
-    
-}
 
 
 @end

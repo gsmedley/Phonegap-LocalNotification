@@ -1,4 +1,4 @@
-package com.phonegap.plugins.localnotification;
+package com.phonegap.plugin.localnotification;
 
 import java.util.Calendar;
 import java.util.Map;
@@ -33,7 +33,7 @@ public class AlarmHelper {
      *      Calendar)
      */
     public boolean addAlarm(boolean repeatDaily, String alarmTitle, String alarmSubTitle, String alarmTicker,
-	    String notificationId, Calendar cal) {
+    		String iconName, String notificationId, Calendar cal) {
 
 	final long triggerTime = cal.getTimeInMillis();
 	final Intent intent = new Intent(this.ctx, AlarmReceiver.class);
@@ -45,6 +45,8 @@ public class AlarmHelper {
 	intent.putExtra(AlarmReceiver.SUBTITLE, alarmSubTitle);
 	intent.putExtra(AlarmReceiver.TICKER_TEXT, alarmTicker);
 	intent.putExtra(AlarmReceiver.NOTIFICATION_ID, notificationId);
+	intent.putExtra(AlarmReceiver.ICON_NAME, iconName);
+	
 	intent.putExtra(AlarmReceiver.HOUR_OF_DAY, hour);
 	intent.putExtra(AlarmReceiver.MINUTE, min);
 
