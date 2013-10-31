@@ -23,7 +23,7 @@ localNotifier.addNotification = function(options, callback, errorCallback) {
         icon            : "",  // resource name
 
         // ios only
-        sound           : "horn.caf" ,
+        sound           : "" ,
         hasAction       : true,
         action          : 'View',
         badge           : 0 ,        

@@ -12,6 +12,7 @@ Changes
 - Rationalize iOS/Android parameters
 - Support notifification icon - Android
 - Tap Notifification to open app - Android
+- Add other repeat periods - Android
 
 TO DO
 -----
@@ -27,8 +28,6 @@ Install the core plugin files via the [Command-line Interface](http://docs.phone
     $ phonegap local plugin add https://github.com/gsmedley/Phonegap-LocalNotification.git
 
 
-Place any `.caf` audio files into the `Resources` folder in Xcode. The `horn.caf` file has been included in this repo as an example. Note that the sound only plays if the notification is triggered while the app is in the background.
-
 Using the plugin
 ----------------
 
@@ -37,7 +36,7 @@ Within the `www/js/index.js` file, or any other included js files, the following
     localNotifier.addNotification({
         date            : new Date(new Date().getTime() + 5000),
         message         : "This is a local notification.",
-        id              : '1'  ,
+        id              : '1'  , // reusing an id will replace an existing notification
         repeat          : "" ,  // minute, hour, day, week
 
         // android only
@@ -45,13 +44,21 @@ Within the `www/js/index.js` file, or any other included js files, the following
         icon            : "small_notification_icon",  // resource name
 
         // ios only
-        sound           : "horn.caf" ,
+        sound           : "horn.caf" , // name of sound file
         hasAction       : true,
         action          : 'View',
         badge           : 0 ,        
         background      : function(notificationId){  console.log( "addNotification background callback") },
         foreground      : function(notificationId){   console.log( "addNotification foreground callback")  }
     });
+
+To cancel a notification:
+
+    localNotifier.cancelNotification(1);
+
+To cancel all notifications:
+
+   localNotifier.cancelAllNotifications();
 
 Uninstalling the plugin
 -----------------------
@@ -60,4 +67,4 @@ To uninstall the plugin and its components, use:
 
     $ phonegap local plugin remove localnotification
 
-Note: You may also want to comment out the files above that were necessary for installation.
+
