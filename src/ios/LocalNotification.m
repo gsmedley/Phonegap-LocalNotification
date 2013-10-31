@@ -10,10 +10,10 @@
 @implementation LocalNotification
 - (void)addNotification:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
     NSMutableDictionary *repeatDict = [[NSMutableDictionary alloc] init];
-    [repeatDict setObject:[NSNumber numberWithInt:NSDayCalendarUnit] forKey:@"daily"];
-    [repeatDict setObject:[NSNumber numberWithInt:NSWeekCalendarUnit] forKey:@"weekly"];
-    [repeatDict setObject:[NSNumber numberWithInt:NSMonthCalendarUnit] forKey:@"monthly"];
-    [repeatDict setObject:[NSNumber numberWithInt:NSYearCalendarUnit] forKey:@"yearly"];
+    [repeatDict setObject:[NSNumber numberWithInt:NSMinuteCalendarUnit] forKey:@"minute"];
+    [repeatDict setObject:[NSNumber numberWithInt:NSHourCalendarUnit] forKey:@"hour"];
+    [repeatDict setObject:[NSNumber numberWithInt:NSDayCalendarUnit] forKey:@"day"];
+    [repeatDict setObject:[NSNumber numberWithInt:NSWeekCalendarUnit] forKey:@"week"];
     [repeatDict setObject:[NSNumber numberWithInt:0] forKey:@""];
 
     // notif settings

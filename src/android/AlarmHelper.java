@@ -3,6 +3,7 @@ package com.phonegap.plugin.localnotification;
 import java.util.Calendar;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -32,7 +33,7 @@ public class AlarmHelper {
      * @see LocalNotification#add(boolean, String, String, String, int,
      *      Calendar)
      */
-    public boolean addAlarm(boolean repeatDaily, String alarmTitle, String alarmSubTitle, String alarmTicker,
+    public boolean addAlarm(String repeat, String alarmTitle, String alarmSubTitle, String alarmTicker,
     		String iconName, String notificationId, Calendar cal) {
 
 	final long triggerTime = cal.getTimeInMillis();
@@ -53,9 +54,19 @@ public class AlarmHelper {
 	final PendingIntent sender = PendingIntent.getBroadcast(this.ctx, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 	/* Get the AlarmManager service */
 	final AlarmManager am = getAlarmManager();
-
-	if (repeatDaily) {
-	    am.setRepeating(AlarmManager.RTC_WAKEUP, triggerTime, AlarmManager.INTERVAL_DAY, sender);
+	
+	if (!repeat.isEmpty()) {
+		long interval = AlarmManager.INTERVAL_DAY;
+	    if( repeat.equalsIgnoreCase("minute"))
+	    	interval = TimeUnit.MILLISECONDS.convert(1, TimeUnit.MINUTES);
+	    else if( repeat.equalsIgnoreCase("hour"))
+	    	interval = TimeUnit.MILLISECONDS.convert(1, TimeUnit.HOURS);
+	    else if( repeat.equalsIgnoreCase("day"))
+	    	interval = AlarmManager.INTERVAL_DAY;
+	    else if( repeat.equalsIgnoreCase("week"))
+	    	interval = TimeUnit.MILLISECONDS.convert(7, TimeUnit.DAYS);
+	    
+	    am.setInexactRepeating(AlarmManager.RTC_WAKEUP, triggerTime, interval, sender);
 	} else {
 	    am.set(AlarmManager.RTC_WAKEUP, triggerTime, sender);
 	}

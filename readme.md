@@ -16,10 +16,8 @@ Changes
 TO DO
 -----
 
-- Test ios addNotification param changes
-- Make foreground/background callbacks work - Android
-- Run addNotification in a thread - Android
-- Support repeat/sound - Android
+- Test ios changes
+
 
 Installing the plugin
 ---------------------
@@ -40,13 +38,13 @@ Within the `www/js/index.js` file, or any other included js files, the following
         date            : new Date(new Date().getTime() + 5000),
         message         : "This is a local notification.",
         id              : '1'  ,
+        repeat          : "" ,  // minute, hour, day, week
 
         // android only
         ticker          : "Alarm Ticker",
         icon            : "small_notification_icon",  // resource name
 
         // ios only
-        repeat          : "" ,
         sound           : "horn.caf" ,
         hasAction       : true,
         action          : 'View',

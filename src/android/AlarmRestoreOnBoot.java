@@ -43,7 +43,7 @@ public class AlarmRestoreOnBoot extends BroadcastReceiver {
 
 		options.parseOptions(alarmDetails);
 
-		final boolean daily = options.isRepeatDaily();
+		final String daily = options.getRepeat();
 		final String title = options.getAlarmTitle();
 		final String subTitle = options.getAlarmSubTitle();
 		final String ticker = options.getAlarmTicker();

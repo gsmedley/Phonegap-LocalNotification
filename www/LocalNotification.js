@@ -9,20 +9,20 @@
 var localNotifier = module.exports;
 
 //------------------------------------------------------------------------------
-localNotifier.addNotification = function(options) {
+localNotifier.addNotification = function(options, callback, errorCallback) {
         
     var defaults = {
                 
         date            : new Date(new Date().getTime() + 5000),
         message         : "This is a local notification.",
         id              : '1'  ,
+        repeat          : "" ,  // minute, hour, day, week
 
         // android only
-        ticker          : "Alarm Ticker",
-        icon            : "small_notification_icon",
+        ticker          : "",
+        icon            : "",  // resource name
 
         // ios only
-        repeat          : "" ,
         sound           : "horn.caf" ,
         hasAction       : true,
         action          : 'View',
@@ -42,47 +42,20 @@ localNotifier.addNotification = function(options) {
     }
     
     if (typeof defaults.date == 'object') {
-        defaults.date = Math.round(defaults.date.getTime()/1000);
+        defaults.date = defaults.date.getTime();
     }
 
-    for (var key in defaults) { console.log( "-- " + key + ": " +  defaults[key] ) }
      
-    cordova.exec(
-        function(params) {
-            window.setTimeout(function(){
-                if(typeof defaults.foreground == 'function'){
-                  if(params.appState == "active") {
-                    defaults.foreground(params.notificationId);
-                    return;
-                  }
-                }
-                if(typeof defaults.background == 'function'){
-                  if(params.appState != "active") {
-                    defaults.background(params.notificationId);
-                    return;
-                  }
-                }
-            }, 1);
-        }, 
-        function(err){
-          console.log("ERROR in cordova.exec");
-          console.log(err);
-        }, 
-        "LocalNotification" , 
-        "addNotification"   , 
-        [
-            defaults
-        ]
-    );
+    cordova.exec( callback, errorCallback, "LocalNotification", "addNotification" ,  [ defaults ]  );
                     
 };
 
 //------------------------------------------------------------------------------  
-localNotifier.cancelNotification = function(id, callback) {
-    cordova.exec(callback, null, "LocalNotification", "cancelNotification", [id]);
+localNotifier.cancelNotification = function(id, callback, errorCallback) {
+    cordova.exec(callback, errorCallback, "LocalNotification", "cancelNotification", [id]);
 };
 
 //------------------------------------------------------------------------------  
-localNotifier.cancelAllNotifications = function(callback) {
-    cordova.exec(callback, null, "LocalNotification", "cancelAllNotifications", []);
+localNotifier.cancelAllNotifications = function(callback, errorCallback) {
+    cordova.exec(callback, errorCallback, "LocalNotification", "cancelAllNotifications", []);
 };

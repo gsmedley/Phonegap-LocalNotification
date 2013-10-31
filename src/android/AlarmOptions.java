@@ -19,7 +19,7 @@ public class AlarmOptions {
     private String alarmTitle = "";
     private String alarmSubTitle = "";
     private String alarmTicker = "";
-    private boolean repeatDaily = false;
+    private String repeat = "";
     private String notificationId = "";
     private String iconName = "";
 
@@ -48,6 +48,7 @@ public class AlarmOptions {
             alarmSubTitle = lines[1];
         }
         
+        repeat =  options.optString("repeat");
         alarmTicker = options.optString("ticker");
         iconName = options.optString("icon");
         notificationId = options.optString("id");
@@ -86,12 +87,12 @@ public class AlarmOptions {
     this.alarmTicker = alarmTicker;
     }
 
-    public boolean isRepeatDaily() {
-    return repeatDaily;
+    public String getRepeat() {
+      return repeat;
     }
 
-    public void setRepeatDaily(boolean repeatDaily) {
-    this.repeatDaily = repeatDaily;
+    public void setRepeat(String repeat) {
+      this.repeat = repeat;
     }
 
     public String getIconName() {

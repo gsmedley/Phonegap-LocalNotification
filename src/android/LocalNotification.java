@@ -1,5 +1,6 @@
 package com.phonegap.plugin.localnotification;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import org.json.JSONArray;
@@ -45,7 +46,7 @@ public class LocalNotification extends CordovaPlugin {
         final AlarmOptions alarmOptions = new AlarmOptions();
         alarmOptions.parseOptions(optionsArr);
         String alarmId = alarmOptions.getNotificationId();
-        final boolean daily = alarmOptions.isRepeatDaily();
+        final String daily = alarmOptions.getRepeat();
         final String title = alarmOptions.getAlarmTitle();
         final String subTitle = alarmOptions.getAlarmSubTitle();
         final String ticker = alarmOptions.getAlarmTicker();
@@ -90,15 +91,13 @@ public class LocalNotification extends CordovaPlugin {
      *            should first be started
      * @return A pluginresult.
      */
-    public PluginResult add(boolean repeatDaily, String alarmTitle, String alarmSubTitle, String alarmTicker,
+    public PluginResult add(String repeat, String alarmTitle, String alarmSubTitle, String alarmTicker,
     		 String icon,  String alarmId, Calendar cal) {
-    final long triggerTime = cal.getTimeInMillis();
-    final String recurring = repeatDaily ? "daily" : "onetime";
 
-    Log.d(PLUGIN_NAME, "Adding " + recurring + " notification: '" + alarmTitle + alarmSubTitle + "' with id: "
-        + alarmId + " at timestamp: " + triggerTime);
+    Log.d(PLUGIN_NAME, "Adding " + repeat + " notification: '" + alarmTitle + alarmSubTitle + "' with id: "
+        + alarmId + " at : " +  (new SimpleDateFormat("dd-MM-yy:HH:mm:SS Z")).format(cal.getTime()) );
 
-    boolean result = alarm.addAlarm(repeatDaily, alarmTitle, alarmSubTitle,  alarmTicker, icon, alarmId, cal);
+    boolean result = alarm.addAlarm(repeat, alarmTitle, alarmSubTitle,  alarmTicker, icon, alarmId, cal);
     if (result) {
         return new PluginResult(PluginResult.Status.OK);
     } else {
