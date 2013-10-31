@@ -36,6 +36,21 @@
           <param name="android-package" value="com.phonegap.plugin.localnotification.LocalNotification"/>
       </feature>
     </config-file>
+    
+    <config-file target="AndroidManifest.xml" parent="/manifest/application">
+      <receiver android:name="com.phonegap.plugin.localnotification.AlarmReceiver">
+        <meta-data android:name="AlarmReceiver"  android:value="alarm" />
+      </receiver>
+      <receiver android:name="com.phonegap.plugin.localnotification.AlarmRestoreOnBoot">
+          <intent-filter>
+              <action android:name="android.intent.action.BOOT_COMPLETED" />
+          </intent-filter>
+      </receiver>
+    </config-file>
+    
+    <config-file target="AndroidManifest.xml" parent="/manifest">
+      <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    </config-file>
 
     <source-file src="src/android/AlarmHelper.java" target-dir="src/com/phonegap/plugin/localnotification" />      
     <source-file src="src/android/AlarmOptions.java" target-dir="src/com/phonegap/plugin/localnotification" />      
