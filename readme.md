@@ -25,7 +25,7 @@ Installing the plugin
 
 Install the core plugin files via the [Command-line Interface](http://docs.phonegap.com/en/3.0.0/guide_cli_index.md.html#The%20Command-line%20Interface):
 
-    $ phonegap local plugin add https://github.com/gsmedley/Phonegap-LocalNotification.git
+    $ phonegap plugin add https://github.com/gsmedley/Phonegap-LocalNotification.git
 
 
 Using the plugin
@@ -58,13 +58,13 @@ To cancel a notification:
 
 To cancel all notifications:
 
-   localNotifier.cancelAllNotifications();
+    localNotifier.cancelAllNotifications();
 
 Uninstalling the plugin
 -----------------------
 
 To uninstall the plugin and its components, use:
 
-    $ phonegap local plugin remove localnotification
+    $ phonegap plugin remove localnotification
 
 

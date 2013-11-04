@@ -6,11 +6,15 @@
   <name>LocalNotification</name>
   <description>Local notification for time-based alerts.</description>
   <license>MIT License</license>
-  <keywords>localnotification, notification, timer, alert, alarm clock</keywords>
+  <keywords>localnotification, notification, timer, alert, alarm clock, badge</keywords>
   
   <js-module src="www/localnotification.js" name="LocalNotification">
     <clobbers target="localNotifier" />
   </js-module> 
+
+  <engines>
+    <engine name="cordova" version="&gt;=3.0.0" />
+  </engines>
  
   <!-- ios -->
   <platform name="ios">
